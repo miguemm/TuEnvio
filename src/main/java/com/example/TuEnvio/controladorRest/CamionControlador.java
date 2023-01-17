@@ -1,6 +1,7 @@
 package com.example.TuEnvio.controladorRest;
 
 import com.example.TuEnvio.dominio.CamionDTO;
+import com.example.TuEnvio.dominio.CargaDTO;
 import com.example.TuEnvio.dominio.Respuesta;
 import com.example.TuEnvio.negocio.CamionServicio;
 import jakarta.validation.Valid;
@@ -25,6 +26,11 @@ public class CamionControlador {
         return new ResponseEntity<>(camionServicio.createCamion(nuevoCamion), HttpStatus.CREATED);
     }
 
+    @PostMapping("/carga")
+    ResponseEntity<Respuesta> cargaCamion(@Valid @RequestBody CargaDTO carga){
+        return new ResponseEntity<>(camionServicio.cargaCamion(carga), HttpStatus.OK);
+    }
+
     @DeleteMapping("")
     ResponseEntity<Respuesta> deleteCamion(@RequestParam @NotBlank(message = "{restriccion.cadenaVacia}") String placa){
         return new ResponseEntity<>(camionServicio.deleteCamion(placa), HttpStatus.OK);
@@ -44,4 +50,5 @@ public class CamionControlador {
     ResponseEntity<Respuesta> findAllByPlacaAsc(@RequestParam @PositiveOrZero int pagina, @RequestParam @PositiveOrZero int tamanio){
         return new ResponseEntity<>(camionServicio.findAllByPlacaAsc(pagina,tamanio), HttpStatus.OK);
     }
+
 }

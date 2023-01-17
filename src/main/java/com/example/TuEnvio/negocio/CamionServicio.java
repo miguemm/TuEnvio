@@ -1,6 +1,7 @@
 package com.example.TuEnvio.negocio;
 
 import com.example.TuEnvio.dominio.CamionDTO;
+import com.example.TuEnvio.dominio.CargaDTO;
 import com.example.TuEnvio.dominio.Respuesta;
 
 /**
@@ -15,6 +16,15 @@ public interface CamionServicio {
      * @return {@link Respuesta} Objeto de respuesta para el servicio, el cual contiene un boolean para indicar el estado de la transaccion
      */
     Respuesta<Object> createCamion(CamionDTO nuevoCamion);
+
+    /**
+     * Metodo que permite la creacion de camiones
+     *
+     * @param carga
+     *      {@link CargaDTO} Objeto con la información a insertar, recibido en el cuerpo de la petición al servicio Rest
+     * @return {@link Respuesta} Objeto de respuesta para el servicio, el cual contiene un boolean para indicar el estado de la transaccion
+     */
+    Respuesta<Object> cargaCamion(CargaDTO carga);
 
     /**
      * Metodo que permite eliminar un Camion
