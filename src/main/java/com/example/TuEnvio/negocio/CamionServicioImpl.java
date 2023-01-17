@@ -72,28 +72,25 @@ public class CamionServicioImpl implements CamionServicio{
 
         Boolean bandera = false;
         List<Camion> potencial = new ArrayList<>();
-        int cantidadPotencial = carga.getCantidad();
+        int restante = carga.getCantidad();
 
         for (Camion camion:camiones) {
-            if (camion.getCapacidad() >= cantidadPotencial){
-                camion.setCapacidad(camion.getCapacidad() - carga.getCantidad());
+            if (camion.getCapacidad() >= restante){
+                camion.setCapacidad(camion.getCapacidad() - restante);
                 potencial.add(camion);
                 bandera = true;
-                cantidadPotencial = 0;
+                restante = 0;
                 break;
             } else {
-                int restante = carga.getCantidad() - camion.getCapacidad();
+                restante = carga.getCantidad() - camion.getCapacidad();
 
-                cantidadPotencial = cantidadPotencial - restante;
                 camion.setCapacidad(0);
                 potencial.add(camion);
-                System.out.println("else" + cantidadPotencial);
+
             }
         }
 
-        System.out.println("Resultado Cantidad Potencial");
-        if (cantidadPotencial == 0){
-            System.out.println("Entro");
+        if (restante == 0){
             bandera = true;
             for (Camion camion:potencial) {
                 camionRespositorio.save(camion);
