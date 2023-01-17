@@ -14,10 +14,9 @@ public class Camion {
 
     /** Id, Placa del camion */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Size(min = 1, max = 30)
     @NotNull
-    private Integer placa;
+    private String placa;
 
     /** Tipo de producto que carga el camion*/
     @NotNull
