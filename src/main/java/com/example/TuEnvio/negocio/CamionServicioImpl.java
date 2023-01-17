@@ -82,7 +82,7 @@ public class CamionServicioImpl implements CamionServicio{
                 restante = 0;
                 break;
             } else {
-                restante = carga.getCantidad() - camion.getCapacidad();
+                restante = restante - camion.getCapacidad();
 
                 camion.setCapacidad(0);
                 potencial.add(camion);
