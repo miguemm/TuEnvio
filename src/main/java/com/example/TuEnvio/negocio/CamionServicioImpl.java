@@ -1,7 +1,9 @@
 package com.example.TuEnvio.negocio;
 
 import com.example.TuEnvio.dominio.CamionDTO;
+import com.example.TuEnvio.dominio.CargaDTO;
 import com.example.TuEnvio.dominio.Respuesta;
+import com.example.TuEnvio.excepciones.custom.CapacidadExcedidaExcepcion;
 import com.example.TuEnvio.excepciones.custom.EntidadExisteExcepcion;
 import com.example.TuEnvio.excepciones.custom.EntidadNoExisteExcepcion;
 import com.example.TuEnvio.modelo.Camion;
@@ -16,7 +18,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Clase encargada de implementar la logica de negocios para las operaciones a realizar sobre el objeto de dominio de tipo Camion.
@@ -48,6 +53,61 @@ public class CamionServicioImpl implements CamionServicio{
                 .data(true)
                 .build();
     }
+
+    /**
+     * @see CamionServicio#createCamion(CamionDTO)
+     */
+    @Override
+    @Transactional
+    public Respuesta<Object> cargaCamion(CargaDTO carga) {
+
+        List<Camion> camiones = camionRespositorio.findBytipoProducto(carga.getTipoProducto());
+
+        camiones = camiones.stream()
+                .filter(x -> x.getCapacidad() > 0)
+                .collect(Collectors.toList());
+
+        if (camiones.isEmpty())
+            throw new CapacidadExcedidaExcepcion("No hay camiones de este tipo: " + carga.getTipoProducto());
+
+        Boolean bandera = false;
+        List<Camion> potencial = new ArrayList<>();
+        int restante = carga.getCantidad();
+
+        for (Camion camion:camiones) {
+            if (camion.getCapacidad() >= restante){
+                camion.setCapacidad(camion.getCapacidad() - restante);
+                potencial.add(camion);
+                bandera = true;
+                restante = 0;
+                break;
+            } else {
+                restante = carga.getCantidad() - camion.getCapacidad();
+
+                camion.setCapacidad(0);
+                potencial.add(camion);
+
+            }
+        }
+
+        if (restante == 0){
+            bandera = true;
+            for (Camion camion:potencial) {
+                camionRespositorio.save(camion);
+            }
+        }
+
+        if (!bandera){
+            throw new CapacidadExcedidaExcepcion("No hay espacio disponible en los camiones: " + carga.getTipoProducto());
+        }
+
+        return Respuesta.builder()
+                .mensajeDesarrollador(HttpStatus.OK.toString())
+                .mensajeUsuario("Camion cargado con el pedido")
+                .data(camiones)
+                .build();
+    }
+
 
     /**
      * @see CamionServicio#deleteCamion(String)

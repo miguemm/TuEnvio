@@ -1,6 +1,7 @@
 package com.example.TuEnvio.excepciones;
 
 import com.example.TuEnvio.dominio.Respuesta;
+import com.example.TuEnvio.excepciones.custom.CapacidadExcedidaExcepcion;
 import com.example.TuEnvio.excepciones.custom.EntidadExisteExcepcion;
 import com.example.TuEnvio.excepciones.custom.EntidadNoExisteExcepcion;
 import jakarta.servlet.http.HttpServletRequest;
@@ -59,6 +60,17 @@ public class ExcepcionesControlador {
                 .build();
 
         return new ResponseEntity<>(respuesta, HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    @ExceptionHandler(CapacidadExcedidaExcepcion.class)
+    public ResponseEntity<Respuesta> entityDoesntExistsException(final HttpServletRequest req, final CapacidadExcedidaExcepcion ex) {
+        Respuesta respuesta = Respuesta.builder()
+                .mensajeDesarrollador(ex.getMessage() + "\n" + req.getRequestURL().toString() + "\n" + req.getMethod())
+                .mensajeUsuario(ex.getMessage())
+                .data(HttpStatus.BAD_REQUEST.value())
+                .build();
+
+        return new ResponseEntity<>(respuesta, HttpStatus.BAD_REQUEST);
     }
 
 
